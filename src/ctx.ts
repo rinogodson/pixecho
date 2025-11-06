@@ -1,5 +1,5 @@
 const ctx: {
-  image: HTMLImageElement | null;
+  image: Blob | null;
   pixelSize: number;
   width: number;
   pixelData: string[];
