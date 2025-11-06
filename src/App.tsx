@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import ctx from "./ctx";
 import useCtx from "./Hooks/useCtx";
 import { useDropzone } from "react-dropzone";
@@ -6,7 +6,8 @@ import { spring } from "motion/react";
 
 function App() {
   const c = useCtx(ctx);
-  const canRef = useRef(null);
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const canRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef(null);
 
   const onDrop = useCallback((files: Blob[]) => {
@@ -17,11 +18,13 @@ function App() {
     reader.onload = (event: any) => {
       const img = new window.Image();
       img.onload = () => {
-        c.setCtx("image", img);
+        setImage(img);
+        procImg(img);
       };
       img.src = event.target.result;
     };
     reader.readAsDataURL(file);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const copyToClipboard = (text: string) => {
@@ -38,6 +41,42 @@ function App() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
   });
+
+  const procImg = (img: HTMLImageElement) => {
+    if (!canRef.current) return;
+    const canva = canRef.current;
+    const ctx = canva.getContext("2d");
+
+    const aspectRatio = img.height / img.width;
+    const targetWidth = c.ctx.width;
+    const targetHeight = Math.round(targetWidth * aspectRatio);
+
+    canva.width = targetHeight;
+    canva.height = targetWidth;
+
+    if (!ctx) {
+      console.error("The ctx is null");
+      return;
+    }
+    ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+    const imgData = ctx.getImageData(0, 0, targetWidth, targetHeight);
+
+    const pixels = [];
+    for (let y = 0; y < targetHeight; y++) {
+      const row = [];
+      for (let x = 0; x < targetWidth; x++) {
+        const idx = (y * targetWidth + x) * 4;
+        const r = imgData.data[idx];
+        const g = imgData.data[idx + 1];
+        const b = imgData.data[idx + 2];
+        row.push({ r, g, b });
+      }
+      pixels.push(row);
+    }
+
+    c.setCtx("pixelData", pixels);
+    console.log(pixels);
+  };
 
   return (
     <div className="gap-3 w-screen h-screen flex-col bg-[#090E13] flex justify-center items-center p-10">
@@ -70,6 +109,7 @@ function App() {
             <p>Drop the image here, or click to upload</p>
           )}
         </div>
+        <canvas ref={canRef} className="hidden" />
       </div>
     </div>
   );
