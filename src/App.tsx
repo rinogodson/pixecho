@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ctx from "./ctx";
 import useCtx from "./Hooks/useCtx";
 import { useDropzone } from "react-dropzone";
@@ -6,12 +6,19 @@ import { spring } from "motion/react";
 import { motion } from "motion/react";
 import CopyBtn from "./Hooks/Components/CopyBtn/CopyBtn";
 import Btn from "./Hooks/Components/Btn/Btn";
-import { Check, HardDriveDownload } from "lucide-react";
+import { Check, FileDown, HardDriveDownload } from "lucide-react";
 
 function App() {
   const c = useCtx(ctx);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const canRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    if (image) {
+      procImg(image);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [c.ctx.width]);
 
   const onDrop = useCallback(
     (files: File[]) => {
@@ -117,7 +124,7 @@ function App() {
       <img
         draggable={false}
         src="/pixecho.svg"
-        className="w-50 absolute top-10"
+        className="w-50 absolute top-10 left-10"
       />
       <div className="flex gap-20 justify-start">
         <div className="flex flex-col gap-3 justify-center items-center">
@@ -139,21 +146,28 @@ function App() {
                   transition: "all 300ms",
                   display: image ? "none" : "flex",
                 }}
-                className="w-90 h-80 justify-center items-center border active:rounded-sm overflow-hidden border-white/10 rounded-lg"
+                className="w-90 flex-col gap-4 h-80 justify-center items-center border active:rounded-sm overflow-hidden border-white/10 rounded-lg"
               >
                 {isDragActive ? (
-                  <p>Drop the image here ...</p>
+                  <>
+                    <FileDown size={100} className="text-[#d0d0d0]" />
+                    <p>Drop the image here ...</p>
+                  </>
                 ) : (
-                  <p className="text-center">
-                    Drop the image here,
-                    <br /> or click to upload
-                  </p>
+                  <>
+                    <FileDown size={50} className="text-[#d0d0d0]" />
+                    <p className="text-center">
+                      Drop the image here,
+                      <br /> or click to upload
+                    </p>
+                  </>
                 )}
               </div>
               <canvas
                 ref={canRef}
-                className="w-100"
+                className="h-120"
                 style={{
+                  aspectRatio: `${image?.width} / ${image?.height}`,
                   display: image ? "block" : "none",
                   imageRendering: "pixelated",
                 }}
@@ -183,7 +197,17 @@ function App() {
             animate={{ translateY: 0, opacity: 1 }}
             exit={{ translateY: 100, opacity: 0 }}
             className="w-80 h-90 bg-white/1 border border-white/10 rounded-xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_3px_rgba(0,0,0,1),inset_0_1px_0px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]"
-          ></motion.div>
+          >
+            <input
+              type="range"
+              min={10}
+              max={100}
+              value={c.ctx.width}
+              onChange={(e) => {
+                c.setCtx("width", Number(e.target.value));
+              }}
+            />
+          </motion.div>
         )}
       </div>
     </div>
