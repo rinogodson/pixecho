@@ -96,9 +96,7 @@ function App() {
     }
 
     const reset = "\\x1b[0m";
-    const echoLines = lines
-      .map((line) => `echo -e "${line}${reset}"`)
-      .join("\n");
+    const echoLines = lines.map((line) => `echo "${line}${reset}"`).join("\n");
     c.setCtx("echocmd", echoLines);
   };
 
