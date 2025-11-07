@@ -141,7 +141,10 @@ function App() {
           {isDragActive ? (
             <p>Drop the image here ...</p>
           ) : (
-            <p>Drop the image here, or click to upload</p>
+            <p className="text-center">
+              Drop the image here,
+              <br /> or click to upload
+            </p>
           )}
         </div>
         <canvas ref={canRef} className="hidden" />
