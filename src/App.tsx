@@ -4,9 +4,15 @@ import useCtx from "./Hooks/useCtx";
 import { useDropzone } from "react-dropzone";
 import { spring } from "motion/react";
 import { motion } from "motion/react";
-import CopyBtn from "./Hooks/Components/CopyBtn/CopyBtn";
-import Btn from "./Hooks/Components/Btn/Btn";
-import { Check, FileDown, HardDriveDownload } from "lucide-react";
+import CopyBtn from "./Components/CopyBtn/CopyBtn";
+import Btn from "./Components/Btn/Btn";
+import {
+  Check,
+  FileDown,
+  HardDriveDownload,
+  ImageUpscaleIcon,
+} from "lucide-react";
+import Toggle from "./Components/Toggle/Toggle";
 
 function App() {
   const c = useCtx(ctx);
@@ -61,6 +67,7 @@ function App() {
       console.error("The ctx is null");
       return;
     }
+    ctx.filter = "grayscale(100%)";
     ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
     const imgData = ctx.getImageData(0, 0, targetWidth, targetHeight);
 
@@ -134,8 +141,13 @@ function App() {
               style={{
                 scale: isDragActive ? 1.1 : 1,
                 transition: "all " + spring(0.3, 0.5),
+                border: image
+                  ? "solid 3px rgba(255,255,255,0.2)"
+                  : "dashed 3px",
+                borderColor: "rgba(255,255,255,0.2)",
+                borderRadius: image ? "0" : "1rem",
               }}
-              className="w-fit p-2 active:p-3 text-white/80 h-fit border-dashed border-3 border-white/20 rounded-2xl"
+              className="w-fit p-2 active:p-1 text-white/80 h-fit rounded-2xl"
             >
               {!image && <input accept="image/*" {...getInputProps()} />}
               <div
@@ -165,7 +177,7 @@ function App() {
               </div>
               <canvas
                 ref={canRef}
-                className="h-120"
+                className="h-100"
                 style={{
                   aspectRatio: `${image?.width} / ${image?.height}`,
                   display: image ? "block" : "none",
@@ -176,37 +188,52 @@ function App() {
           </motion.div>
           {c.ctx.echocmd && (
             <motion.div
-              initial={{ translateY: 100, opacity: 0 }}
+              initial={{ translateY: -100, opacity: 0 }}
               animate={{ translateY: 0, opacity: 1 }}
-              exit={{ translateY: 100, opacity: 0 }}
+              exit={{ translateY: -100, opacity: 0 }}
               className="flex gap-5 flex-col mt-10"
             >
-              <CopyBtn text={c.ctx.echocmd} />
               <Btn
                 text="Download Script"
                 fn={downloadScript}
                 initComp={HardDriveDownload}
                 exitComp={Check}
               />
+              <CopyBtn text={c.ctx.echocmd} />
             </motion.div>
           )}
         </div>
         {c.ctx.echocmd && (
           <motion.div
-            initial={{ translateY: 100, opacity: 0 }}
-            animate={{ translateY: 0, opacity: 1 }}
-            exit={{ translateY: 100, opacity: 0 }}
-            className="w-80 h-90 bg-white/1 border border-white/10 rounded-xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_3px_rgba(0,0,0,1),inset_0_1px_0px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]"
+            initial={{ translateX: -100, opacity: 0 }}
+            animate={{ translateX: 0, opacity: 1 }}
+            exit={{ translateX: -100, opacity: 0 }}
+            className="w-80 gap-7 flex flex-col h-fit bg-white/1 p-5 border border-white/10 rounded-xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_3px_rgba(0,0,0,1),inset_0_1px_0px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]"
           >
-            <input
-              type="range"
-              min={10}
-              max={100}
-              value={c.ctx.width}
-              onChange={(e) => {
-                c.setCtx("width", Number(e.target.value));
-              }}
-            />
+            <div className="flex flex-col text-white gap-3">
+              <div className="flex gap-3">
+                <ImageUpscaleIcon />
+                <p>Size</p>
+                <p className="text-white/40">
+                  {c.ctx.width > 100
+                    ? c.ctx.width + " (oversize)"
+                    : c.ctx.width}
+                </p>
+              </div>
+              <label className="slider">
+                <input
+                  type="range"
+                  min={1}
+                  max={150}
+                  value={c.ctx.width}
+                  onChange={(e) => {
+                    c.setCtx("width", Math.round(Number(e.target.value)));
+                  }}
+                  className="level"
+                />
+              </label>
+            </div>
+            <Toggle />
           </motion.div>
         )}
       </div>

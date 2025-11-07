@@ -1,5 +1,4 @@
 const ctx: {
-  pixelSize: number;
   width: number;
   pixelData: {
     r: number;
@@ -8,7 +7,6 @@ const ctx: {
   }[][];
   echocmd: string;
 } = {
-  pixelSize: 8,
   width: 64,
   pixelData: [],
   echocmd: "",
