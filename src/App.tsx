@@ -3,6 +3,7 @@ import ctx from "./ctx";
 import useCtx from "./Hooks/useCtx";
 import { useDropzone } from "react-dropzone";
 import { spring } from "motion/react";
+import CopyBtn from "./Hooks/Components/CopyBtn/CopyBtn";
 
 function App() {
   const c = useCtx(ctx);
@@ -15,6 +16,7 @@ function App() {
       if (!file) return;
 
       const reader = new FileReader();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       reader.onload = (event: any) => {
         const img = new window.Image();
         img.onload = () => {
@@ -28,12 +30,6 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [c],
   );
-
-  const copyToClipboard = (text: string) => {
-    window.navigator.clipboard.writeText(text).catch(() => {
-      alert("Failed to copy to clipboard");
-    });
-  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -149,14 +145,7 @@ function App() {
         </div>
         <canvas ref={canRef} className="hidden" />
       </div>
-      <button
-        onClick={() => {
-          copyToClipboard(c.ctx.echocmd);
-        }}
-        className="text-white bg-white/20"
-      >
-        Copy To Clipboard
-      </button>
+      <CopyBtn text={c.ctx.echocmd} />
     </div>
   );
 }
