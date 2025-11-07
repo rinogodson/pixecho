@@ -128,40 +128,8 @@ function App() {
                 scale: isDragActive ? 1.1 : 1,
                 transition: "all " + spring(0.3, 0.5),
               }}
-              className="w-100 p-2 active:p-3 text-white/80 h-80 border-dashed border-3 border-white/20 rounded-2xl"
+              className="w-fit p-2 active:p-3 text-white/80 h-fit border-dashed border-3 border-white/20 rounded-2xl"
             >
-              {/* <div> */}
-              {/*   {c.ctx.pixelData.length > 0 ? ( */}
-              {/*     <div className="font-[JetBrains_Mono]"> */}
-              {/*       {c.ctx.pixelData.map((row, y) => { */}
-              {/*         if (y % 2 !== 0) return null; */}
-              {/*         return ( */}
-              {/*           <div key={y}> */}
-              {/*             {row.map((pixel, x) => { */}
-              {/*               const topPixel = pixel; */}
-              {/*               const bottomPixel = */}
-              {/*                 y + 1 < c.ctx.pixelData.length */}
-              {/*                   ? c.ctx.pixelData[y + 1][x] */}
-              {/*                   : { r: 0, g: 0, b: 0 }; */}
-              {/*               return ( */}
-              {/*                 <span */}
-              {/*                   key={x} */}
-              {/*                   style={{ */}
-              {/*                     color: `rgb(${topPixel.r},${topPixel.g},${topPixel.b})`, */}
-              {/*                     backgroundColor: `rgb(${bottomPixel.r},${bottomPixel.g},${bottomPixel.b})`, */}
-              {/*                   }} */}
-              {/*                 > */}
-              {/*                   ▀ */}
-              {/*                 </span> */}
-              {/*               ); */}
-              {/*             })} */}
-              {/*           </div> */}
-              {/*         ); */}
-              {/*       })} */}
-              {/*     </div> */}
-              {/*   ) : null} */}
-              </div>
-
               {!image && <input accept="image/*" {...getInputProps()} />}
               <div
                 style={{
@@ -171,7 +139,7 @@ function App() {
                   transition: "all 300ms",
                   display: image ? "none" : "flex",
                 }}
-                className="justify-center items-center border active:rounded-sm overflow-hidden border-white/10 w-full h-full rounded-lg"
+                className="w-90 h-80 justify-center items-center border active:rounded-sm overflow-hidden border-white/10 rounded-lg"
               >
                 {isDragActive ? (
                   <p>Drop the image here ...</p>
@@ -182,7 +150,14 @@ function App() {
                   </p>
                 )}
               </div>
-              <canvas ref={canRef} className="hidden" />
+              <canvas
+                ref={canRef}
+                className="w-100"
+                style={{
+                  display: image ? "block" : "none",
+                  imageRendering: "pixelated",
+                }}
+              />
             </div>
           </motion.div>
           {c.ctx.echocmd && (
