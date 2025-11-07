@@ -3,7 +3,10 @@ import ctx from "./ctx";
 import useCtx from "./Hooks/useCtx";
 import { useDropzone } from "react-dropzone";
 import { spring } from "motion/react";
+import { motion } from "motion/react";
 import CopyBtn from "./Hooks/Components/CopyBtn/CopyBtn";
+import Btn from "./Hooks/Components/Btn/Btn";
+import { Check, HardDriveDownload } from "lucide-react";
 
 function App() {
   const c = useCtx(ctx);
@@ -110,42 +113,104 @@ function App() {
   };
 
   return (
-    <div className="gap-3 w-screen h-screen flex-col bg-[#090E13] flex justify-center items-center p-10">
+    <div className="gap-3 w-screen h-screen flex bg-[#090E13] justify-center items-center p-10">
       <img
         draggable={false}
         src="/pixecho.svg"
         className="w-50 absolute top-10"
       />
-      <div
-        {...getRootProps()}
-        style={{
-          scale: isDragActive ? 1.1 : 1,
-          transition: "all " + spring(0.3, 0.5),
-        }}
-        className="w-100 p-2 active:p-3 text-white/80 h-80 mt-10 border-dashed border-3 border-white/20 rounded-2xl"
-      >
-        <input accept="image/*" {...getInputProps()} />
-        <div
-          style={{
-            background: !isDragActive
-              ? "rgba(255,255,255,0.02)"
-              : "rgba(255,255,255,0.07)",
-            transition: "all 300ms",
-          }}
-          className="flex justify-center items-center border active:rounded-sm overflow-hidden border-white/10 w-full h-full rounded-lg"
-        >
-          {isDragActive ? (
-            <p>Drop the image here ...</p>
-          ) : (
-            <p className="text-center">
-              Drop the image here,
-              <br /> or click to upload
-            </p>
+      <div className="flex gap-20 justify-start">
+        <div className="flex flex-col gap-3 justify-center items-center">
+          <motion.div layout transition={{ duration: 0.2 }}>
+            <div
+              {...getRootProps()}
+              style={{
+                scale: isDragActive ? 1.1 : 1,
+                transition: "all " + spring(0.3, 0.5),
+              }}
+              className="w-100 p-2 active:p-3 text-white/80 h-80 border-dashed border-3 border-white/20 rounded-2xl"
+            >
+              {/* <div> */}
+              {/*   {c.ctx.pixelData.length > 0 ? ( */}
+              {/*     <div className="font-[JetBrains_Mono]"> */}
+              {/*       {c.ctx.pixelData.map((row, y) => { */}
+              {/*         if (y % 2 !== 0) return null; */}
+              {/*         return ( */}
+              {/*           <div key={y}> */}
+              {/*             {row.map((pixel, x) => { */}
+              {/*               const topPixel = pixel; */}
+              {/*               const bottomPixel = */}
+              {/*                 y + 1 < c.ctx.pixelData.length */}
+              {/*                   ? c.ctx.pixelData[y + 1][x] */}
+              {/*                   : { r: 0, g: 0, b: 0 }; */}
+              {/*               return ( */}
+              {/*                 <span */}
+              {/*                   key={x} */}
+              {/*                   style={{ */}
+              {/*                     color: `rgb(${topPixel.r},${topPixel.g},${topPixel.b})`, */}
+              {/*                     backgroundColor: `rgb(${bottomPixel.r},${bottomPixel.g},${bottomPixel.b})`, */}
+              {/*                   }} */}
+              {/*                 > */}
+              {/*                   ▀ */}
+              {/*                 </span> */}
+              {/*               ); */}
+              {/*             })} */}
+              {/*           </div> */}
+              {/*         ); */}
+              {/*       })} */}
+              {/*     </div> */}
+              {/*   ) : null} */}
+              </div>
+
+              {!image && <input accept="image/*" {...getInputProps()} />}
+              <div
+                style={{
+                  background: !isDragActive
+                    ? "rgba(255,255,255,0.02)"
+                    : "rgba(255,255,255,0.07)",
+                  transition: "all 300ms",
+                  display: image ? "none" : "flex",
+                }}
+                className="justify-center items-center border active:rounded-sm overflow-hidden border-white/10 w-full h-full rounded-lg"
+              >
+                {isDragActive ? (
+                  <p>Drop the image here ...</p>
+                ) : (
+                  <p className="text-center">
+                    Drop the image here,
+                    <br /> or click to upload
+                  </p>
+                )}
+              </div>
+              <canvas ref={canRef} className="hidden" />
+            </div>
+          </motion.div>
+          {c.ctx.echocmd && (
+            <motion.div
+              initial={{ translateY: 100, opacity: 0 }}
+              animate={{ translateY: 0, opacity: 1 }}
+              exit={{ translateY: 100, opacity: 0 }}
+              className="flex gap-5 flex-col mt-10"
+            >
+              <CopyBtn text={c.ctx.echocmd} />
+              <Btn
+                text="Download Script"
+                fn={downloadScript}
+                initComp={HardDriveDownload}
+                exitComp={Check}
+              />
+            </motion.div>
           )}
         </div>
-        <canvas ref={canRef} className="hidden" />
+        {c.ctx.echocmd && (
+          <motion.div
+            initial={{ translateY: 100, opacity: 0 }}
+            animate={{ translateY: 0, opacity: 1 }}
+            exit={{ translateY: 100, opacity: 0 }}
+            className="w-80 h-90 bg-white/1 border border-white/10 rounded-xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_3px_rgba(0,0,0,1),inset_0_1px_0px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]"
+          ></motion.div>
+        )}
       </div>
-      <CopyBtn text={c.ctx.echocmd} />
     </div>
   );
 }
