@@ -8,34 +8,31 @@ function App() {
   const c = useCtx(ctx);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const canRef = useRef<HTMLCanvasElement | null>(null);
-  const fileInputRef = useRef(null);
 
-  const onDrop = useCallback((files: Blob[]) => {
-    const file = files[0];
-    if (!file) return;
+  const onDrop = useCallback(
+    (files: File[]) => {
+      const file = files[0];
+      if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event: any) => {
-      const img = new window.Image();
-      img.onload = () => {
-        setImage(img);
-        procImg(img);
+      const reader = new FileReader();
+      reader.onload = (event: any) => {
+        const img = new window.Image();
+        img.onload = () => {
+          setImage(img);
+          procImg(img);
+        };
+        img.src = event.target.result;
       };
-      img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    [c],
+  );
 
   const copyToClipboard = (text: string) => {
-    window.navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        alert("Echo command copied to clipboard!");
-      })
-      .catch(() => {
-        alert("Failed to copy to clipboard");
-      });
+    window.navigator.clipboard.writeText(text).catch(() => {
+      alert("Failed to copy to clipboard");
+    });
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -48,11 +45,11 @@ function App() {
     const ctx = canva.getContext("2d");
 
     const aspectRatio = img.height / img.width;
-    const targetWidth = c.ctx.width;
+    const targetWidth = c.ctx?.width || img.width;
     const targetHeight = Math.round(targetWidth * aspectRatio);
 
-    canva.width = targetHeight;
-    canva.height = targetWidth;
+    canva.width = targetWidth;
+    canva.height = targetHeight;
 
     if (!ctx) {
       console.error("The ctx is null");
@@ -75,7 +72,47 @@ function App() {
     }
 
     c.setCtx("pixelData", pixels);
+    echoGen(pixels);
     console.log(pixels);
+  };
+
+  const echoGen = (pixels: { r: number; g: number; b: number }[][]) => {
+    if (pixels.length === 0) return;
+    const lines = [];
+
+    for (let g = 0; g < pixels.length; g += 2) {
+      let line = "";
+      for (let x = 0; x < pixels[g].length; x++) {
+        const topPixel = pixels[g][x];
+        const bottomPixel =
+          g + 1 < pixels.length ? pixels[g + 1][x] : { r: 0, g: 0, b: 0 };
+
+        const fg = `\\x1b[38;2;${topPixel.r};${topPixel.g};${topPixel.b}m`;
+        const bg = `\\x1b[48;2;${bottomPixel.r};${bottomPixel.g};${bottomPixel.b}m`;
+
+        line += `${fg}${bg}▀`;
+      }
+      lines.push(line);
+    }
+
+    const reset = "\\x1b[0m";
+    const echoLines = lines
+      .map((line) => `echo -e "${line}${reset}"`)
+      .join("\n");
+    c.setCtx("echocmd", echoLines);
+  };
+
+  const downloadScript = () => {
+    const scriptContent = `#!/bin/bash\n\n${c.ctx.echocmd}\n`;
+    const blob = new Blob([scriptContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "pixecho.sh";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -111,6 +148,14 @@ function App() {
         </div>
         <canvas ref={canRef} className="hidden" />
       </div>
+      <button
+        onClick={() => {
+          copyToClipboard(c.ctx.echocmd);
+        }}
+        className="text-white bg-white/20"
+      >
+        Copy To Clipboard
+      </button>
     </div>
   );
 }
