@@ -1,8 +1,15 @@
-import { Eclipse, Palette } from "lucide-react";
 import { useState } from "react";
 import { motion } from "motion/react";
 
-function Toggle() {
+function Toggle({
+  opt1: Op1,
+  opt2: Op2,
+  onToggle,
+}: {
+  opt1: React.FC;
+  opt2: React.FC;
+  onToggle: (bool: boolean) => void;
+}) {
   const [option, setOption] = useState(false); // YEAH, the naming makes no sense, but it works... so i'm ging with this one!
 
   return (
@@ -11,21 +18,21 @@ function Toggle() {
         style={{ color: option ? "#b0b0b0" : "black" }}
         onClick={() => {
           setOption(false);
+          onToggle(false);
         }}
         className="font-[Poppins] w-[45%] flex justify-center items-center gap-2 h-[calc(100%)] active:scale-95 transition-all duration-300 relative z-1000"
       >
-        <Palette />
-        <p>Color</p>
+        <Op1 />
       </div>
       <div
         onClick={() => {
           setOption(true);
+          onToggle(true);
         }}
         style={{ color: !option ? "#b0b0b0" : "black" }}
         className="font-[Poppins] w-[45%] flex justify-center items-center gap-2 h-[calc(100%)]  active:scale-95 transition-all duration-300 relative z-1000"
       >
-        <Eclipse />
-        <p>B/W</p>
+        <Op2 />
       </div>
       <motion.div
         animate={{
