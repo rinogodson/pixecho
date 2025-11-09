@@ -236,7 +236,7 @@ function App() {
             initial={{ translateX: -100, opacity: 0 }}
             animate={{ translateX: 0, opacity: 1 }}
             exit={{ translateX: -100, opacity: 0 }}
-            className="sm:w-80 w-full h-fit mb-10 text-center flex gap-5 flex-col-reverse sm:flex-col"
+            className="sm:w-80 w-full h-fit sm:mb-0 mb-10 text-center flex gap-5 flex-col-reverse sm:flex-col"
           >
             <div className="gap-10 flex flex-col bg-white/1 p-5 border border-white/10 rounded-xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_3px_rgba(0,0,0,1),inset_0_1px_0px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]">
               <Slider
@@ -319,7 +319,7 @@ function App() {
                 icon={() => <SwatchBook />}
               />
             </div>
-            <div className="gap-2 grid grid-cols-2">
+            <div className="gap-4 flex flex-row-reverse sm:flex-row">
               <button
                 onMouseDown={() => {
                   c.setCtx("compare", true);
@@ -327,7 +327,7 @@ function App() {
                 onMouseUp={() => {
                   c.setCtx("compare", false);
                 }}
-                className="flex justify-center items-center gap-2 font-[Poppins] text-white/80 bg-[#101010] active:opacity-80 text-xl px-4 py-2 rounded-2xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_1.5px_rgba(0,0,0,1),inset_0_1px_2px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]"
+                className="flex justify-center items-center gap-2 w-full font-[Poppins] text-white/80 bg-[#101010] active:opacity-80 text-xl px-4 py-2 rounded-2xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_1.5px_rgba(0,0,0,1),inset_0_1px_2px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]"
               >
                 <Images />
                 Compare
@@ -346,7 +346,7 @@ function App() {
                     saturate: 100,
                   });
                 }}
-                className="flex justify-center items-center gap-2 font-[Poppins] text-white/80 bg-[#101010] active:opacity-80 text-xl px-4 py-2 rounded-2xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_1.5px_rgba(0,0,0,1),inset_0_1px_2px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]"
+                className="flex justify-center items-center gap-2 w-full font-[Poppins] text-white/80 bg-[#101010] active:opacity-80 text-xl px-4 py-2 rounded-2xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_1.5px_rgba(0,0,0,1),inset_0_1px_2px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]"
               >
                 <RotateCcw />
                 Restart
