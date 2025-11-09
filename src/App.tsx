@@ -156,13 +156,13 @@ function App() {
   };
 
   return (
-    <div className="font-[Poppins] gap-3 w-screen h-screen flex bg-[#090E13] justify-center items-center p-10">
+    <div className="font-[Poppins] gap-3 w-screen h-screen flex bg-[#090E13] sm:justify-center sm:items-center items-start justify-center sm:p-10 pt-30">
       <img
         draggable={false}
         src="/pixecho.svg"
-        className="w-50 absolute top-10 left-10"
+        className="w-50 absolute top-5 sm:left-10 sm:top-10"
       />
-      <div className="flex gap-20 justify-start">
+      <div className="flex flex-col sm:flex-row gap-20 justify-start">
         <div className="flex flex-col gap-3 justify-center items-center">
           <motion.div layout transition={{ duration: 0.2 }}>
             <div
@@ -205,7 +205,7 @@ function App() {
               </div>
               <canvas
                 ref={canRef}
-                className="h-100"
+                className="sm:h-100 w-80 sm:w-auto"
                 style={{
                   aspectRatio: `${image?.width} / ${image?.height}`,
                   display: image ? "block" : "none",
@@ -236,7 +236,7 @@ function App() {
             initial={{ translateX: -100, opacity: 0 }}
             animate={{ translateX: 0, opacity: 1 }}
             exit={{ translateX: -100, opacity: 0 }}
-            className="w-80 h-fit text-center flex gap-5 flex-col"
+            className="sm:w-80 w-full h-fit mb-10 text-center flex gap-5 flex-col-reverse sm:flex-col"
           >
             <div className="gap-10 flex flex-col bg-white/1 p-5 border border-white/10 rounded-xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_3px_rgba(0,0,0,1),inset_0_1px_0px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]">
               <Slider

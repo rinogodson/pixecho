@@ -13,7 +13,7 @@ function Toggle({
   const [option, setOption] = useState(false); // YEAH, the naming makes no sense, but it works... so i'm ging with this one!
 
   return (
-    <div className="h-20 w-full bg-black/90 justify-center items-center rounded-3xl border-3 border-white/20 relative flex">
+    <div className="h-20 w-full bg-white/2 justify-center items-center rounded-3xl border-3 border-white/20 relative flex">
       <div
         style={{ color: option ? "#b0b0b0" : "black" }}
         onClick={() => {
