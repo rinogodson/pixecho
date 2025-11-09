@@ -156,13 +156,13 @@ function App() {
   };
 
   return (
-    <div className="font-[Poppins] gap-3 w-screen h-screen flex bg-[#090E13] sm:justify-center sm:items-center items-start justify-center sm:p-10 pt-30">
+    <div className="font-[Poppins] gap-3 w-screen sm:w-[calc(100vw-1.5em)] h-screen sm:h-[calc(100vh-1.5em)] sm:rounded-2xl sm:border sm:border-white/5 flex bg-[#090E13] sm:justify-center sm:items-center items-start justify-center sm:p-10 pt-50">
       <img
         onClick={() => window.location.reload()}
         draggable={false}
         src="/pixecho.svg"
         style={{ transition: "all " + spring(0.3, 0.4) }}
-        className="w-50 absolute top-5 cursor-pointer sm:left-10 sm:top-10 active:scale-95 hover:scale-105"
+        className="w-50 absolute top-8 cursor-pointer sm:left-10 sm:top-10 active:scale-95 hover:scale-105"
       />
       <div className="flex flex-col sm:flex-row gap-20 justify-start">
         <div className="flex flex-col gap-3 justify-center items-center">
@@ -173,11 +173,11 @@ function App() {
                 scale: isDragActive ? 1.1 : 1,
                 transition: "all " + spring(0.3, 0.5),
                 border: image
-                  ? "solid 3px rgba(255,255,255,0.2)"
+                  ? "solid 3px rgba(255,255,255,0.15)"
                   : "dashed 3px rgba(255,255,255, 0.1)",
-                borderRadius: image ? "0" : "1rem",
+                borderRadius: image ? "0" : "2rem",
               }}
-              className="w-fit  p-2 active:p-1 text-white/80 h-fit rounded-2xl"
+              className="w-fit p-2 active:p-1 text-white/80 h-fit rounded-2xl"
             >
               {!image && <input accept="image/*" {...getInputProps()} />}
               <div
@@ -188,11 +188,14 @@ function App() {
                   transition: "all 300ms",
                   display: image ? "none" : "flex",
                 }}
-                className="w-90 flex-col gap-4 h-80 justify-center items-center border active:rounded-sm overflow-hidden border-white/10 rounded-lg"
+                className="w-90 flex-col gap-4 h-80 justify-center items-center border active:rounded-[1.55rem] overflow-hidden border-white/10 rounded-[1.3rem]"
               >
                 {isDragActive ? (
                   <>
-                    <FileDown size={100} className="text-[#d0d0d0]" />
+                    <FileDown
+                      size={100}
+                      className="text-[#d0d0d0] animate-bounce"
+                    />
                     <p>Drop the image here ...</p>
                   </>
                 ) : (
