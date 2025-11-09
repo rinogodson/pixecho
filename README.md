@@ -1,4 +1,5 @@
 <img width="1039" height="981" alt="5266dc63c95ff6a50cfe498eaa3802a0d4cf77ecad8939b4c8f028d38f144f14" src="https://github.com/user-attachments/assets/375b2a0a-82fa-440d-8bf7-b7396af15e7e" />
+
 # Pixecho | Display Images in Any Terminal
 ### Go to the [demo link](https://pixecho.vercel.app), upload an image and then adjust settings, and then use the copy button to copy the command to your clipboard and the download button to download it as a file. You can also compare the edited and non-edited photos. Then run it on your terminal and see the magic!
 Stack: ReactJS, TailwindCSS
