@@ -1,5 +1,6 @@
 const ctx: {
   width: number;
+  dark: boolean;
   compare: boolean;
   pixelData: {
     r: number;
@@ -16,6 +17,7 @@ const ctx: {
   };
 } = {
   width: 64,
+  dark: true,
   compare: false,
   pixelData: [],
   echocmd: "",
