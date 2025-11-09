@@ -13,8 +13,10 @@ import {
   Eclipse,
   FileDown,
   HardDriveDownload,
+  Images,
   ImageUpscaleIcon,
   Palette,
+  RotateCcw,
   Sun,
   SwatchBook,
 } from "lucide-react";
@@ -40,7 +42,13 @@ function App() {
       prevWidth.current = c.ctx.width;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [c.ctx.width, c.ctx.opts, image]);
+  }, [c.ctx.width, c.ctx.opts, image, c.ctx.compare]);
+
+  useEffect(() => {
+    if (!image) return;
+    procImg(image);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [c.ctx.compare]);
 
   const onDrop = useCallback(
     (files: File[]) => {
@@ -84,7 +92,11 @@ function App() {
       return;
     }
 
-    ctx.filter = `grayscale(${c.ctx.opts.grayscale ? "100" : "0"}%) contrast(${c.ctx.opts.contrast}%) brightness(${c.ctx.opts.brightness}%) hue-rotate(${c.ctx.opts.hue}deg) saturate(${c.ctx.opts.saturate}%)`;
+    if (c.ctx.compare) {
+      ctx.filter = ``;
+    } else {
+      ctx.filter = `grayscale(${c.ctx.opts.grayscale ? "100" : "0"}%) contrast(${c.ctx.opts.contrast}%) brightness(${c.ctx.opts.brightness}%) hue-rotate(${c.ctx.opts.hue}deg) saturate(${c.ctx.opts.saturate}%)`;
+    }
 
     ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
     const imgData = ctx.getImageData(0, 0, targetWidth, targetHeight);
@@ -144,7 +156,7 @@ function App() {
   };
 
   return (
-    <div className="gap-3 w-screen h-screen flex bg-[#090E13] justify-center items-center p-10">
+    <div className="font-[Poppins] gap-3 w-screen h-screen flex bg-[#090E13] justify-center items-center p-10">
       <img
         draggable={false}
         src="/pixecho.svg"
@@ -160,8 +172,7 @@ function App() {
                 transition: "all " + spring(0.3, 0.5),
                 border: image
                   ? "solid 3px rgba(255,255,255,0.2)"
-                  : "dashed 3px",
-                borderColor: "rgba(255,255,255,0.2)",
+                  : "dashed 3px rgba(255,255,255, 0.1)",
                 borderRadius: image ? "0" : "1rem",
               }}
               className="w-fit p-2 active:p-1 text-white/80 h-fit rounded-2xl"
@@ -225,84 +236,122 @@ function App() {
             initial={{ translateX: -100, opacity: 0 }}
             animate={{ translateX: 0, opacity: 1 }}
             exit={{ translateX: -100, opacity: 0 }}
-            className="w-80 gap-10 flex flex-col h-fit bg-white/1 p-5 border border-white/10 rounded-xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_3px_rgba(0,0,0,1),inset_0_1px_0px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]"
+            className="w-80 h-fit text-center flex gap-5 flex-col"
           >
-            <Slider
-              valText={
-                c.ctx.width > 100
-                  ? c.ctx.width + " (oversize)"
-                  : String(c.ctx.width)
-              }
-              val={c.ctx.width}
-              onChange={(e) => {
-                c.setCtx("width", Math.round(Number(e.target.value)));
-              }}
-              title={"Size"}
-              min={1}
-              max={150}
-              icon={() => <ImageUpscaleIcon />}
-            />
-            <Toggle
-              opt1={() => (
-                <>
-                  <Palette />
-                  <p>Color</p>
-                </>
-              )}
-              opt2={() => (
-                <>
-                  <Eclipse />
-                  <p>B/W</p>
-                </>
-              )}
-              onToggle={(bool: boolean) => {
-                c.setCtx("opts.grayscale", bool);
-              }}
-            />
-            <Slider
-              valText={String(c.ctx.opts.brightness)}
-              val={c.ctx.opts.brightness}
-              onChange={(e) => {
-                c.setCtx("opts.brightness", Math.round(Number(e.target.value)));
-              }}
-              title={"Brightness"}
-              min={0}
-              max={200}
-              icon={() => <Sun />}
-            />
-            <Slider
-              valText={String(c.ctx.opts.contrast)}
-              val={c.ctx.opts.contrast}
-              onChange={(e) => {
-                c.setCtx("opts.contrast", Math.round(Number(e.target.value)));
-              }}
-              title={"contrast"}
-              min={0}
-              max={200}
-              icon={() => <Contrast />}
-            />
-            <Slider
-              valText={String(c.ctx.opts.hue)}
-              val={c.ctx.opts.hue}
-              onChange={(e) => {
-                c.setCtx("opts.hue", Math.round(Number(e.target.value)));
-              }}
-              title={"Hue"}
-              min={-360}
-              max={360}
-              icon={() => <Blend />}
-            />
-            <Slider
-              valText={String(c.ctx.opts.saturate)}
-              val={c.ctx.opts.saturate}
-              onChange={(e) => {
-                c.setCtx("opts.saturate", Math.round(Number(e.target.value)));
-              }}
-              title={"Saturation"}
-              min={0}
-              max={200}
-              icon={() => <SwatchBook />}
-            />
+            <div className="gap-10 flex flex-col bg-white/1 p-5 border border-white/10 rounded-xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_3px_rgba(0,0,0,1),inset_0_1px_0px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]">
+              <Slider
+                valText={
+                  c.ctx.width > 100
+                    ? c.ctx.width + " (oversize)"
+                    : String(c.ctx.width)
+                }
+                val={c.ctx.width}
+                onChange={(e) => {
+                  c.setCtx("width", Math.round(Number(e.target.value)));
+                }}
+                title={"Size"}
+                min={1}
+                max={150}
+                icon={() => <ImageUpscaleIcon />}
+              />
+              <Toggle
+                opt1={() => (
+                  <>
+                    <Palette />
+                    <p>Color</p>
+                  </>
+                )}
+                opt2={() => (
+                  <>
+                    <Eclipse />
+                    <p>B/W</p>
+                  </>
+                )}
+                onToggle={(bool: boolean) => {
+                  c.setCtx("opts.grayscale", bool);
+                }}
+              />
+              <Slider
+                valText={String(c.ctx.opts.brightness)}
+                val={c.ctx.opts.brightness}
+                onChange={(e) => {
+                  c.setCtx(
+                    "opts.brightness",
+                    Math.round(Number(e.target.value)),
+                  );
+                }}
+                title={"Brightness"}
+                min={0}
+                max={200}
+                icon={() => <Sun />}
+              />
+              <Slider
+                valText={String(c.ctx.opts.contrast)}
+                val={c.ctx.opts.contrast}
+                onChange={(e) => {
+                  c.setCtx("opts.contrast", Math.round(Number(e.target.value)));
+                }}
+                title={"contrast"}
+                min={0}
+                max={200}
+                icon={() => <Contrast />}
+              />
+              <Slider
+                valText={String(c.ctx.opts.hue)}
+                val={c.ctx.opts.hue}
+                onChange={(e) => {
+                  c.setCtx("opts.hue", Math.round(Number(e.target.value)));
+                }}
+                title={"Hue"}
+                min={-360}
+                max={360}
+                icon={() => <Blend />}
+              />
+              <Slider
+                valText={String(c.ctx.opts.saturate)}
+                val={c.ctx.opts.saturate}
+                onChange={(e) => {
+                  c.setCtx("opts.saturate", Math.round(Number(e.target.value)));
+                }}
+                title={"Saturation"}
+                min={0}
+                max={200}
+                icon={() => <SwatchBook />}
+              />
+            </div>
+            <div className="gap-2 grid grid-cols-2">
+              <button
+                onMouseDown={() => {
+                  c.setCtx("compare", true);
+                }}
+                onMouseUp={() => {
+                  c.setCtx("compare", false);
+                }}
+                className="flex justify-center items-center gap-2 font-[Poppins] text-white/80 bg-[#101010] active:opacity-80 text-xl px-4 py-2 rounded-2xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_1.5px_rgba(0,0,0,1),inset_0_1px_2px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]"
+              >
+                <Images />
+                Compare
+              </button>
+              <button
+                onClick={() => {
+                  c.setCtx("pixelData", []);
+                  setImage(null);
+                  c.setCtx("width", 64);
+                  c.setCtx("echocmd", "");
+                  c.setCtx("opts", {
+                    grayscale: false,
+                    brightness: 100,
+                    contrast: 100,
+                    hue: 0,
+                    saturate: 100,
+                  });
+                }}
+                className="flex justify-center items-center gap-2 font-[Poppins] text-white/80 bg-[#101010] active:opacity-80 text-xl px-4 py-2 rounded-2xl shadow-[0_0_0px_1px_rgba(255,255,255,0.2),0_0_0px_1.5px_rgba(0,0,0,1),inset_0_1px_2px_0.2px_rgba(255,255,255,0.1),0_1px_1px_1px_rgba(0,0,0,0.7)]"
+              >
+                <RotateCcw />
+                Restart
+              </button>
+            </div>
           </motion.div>
         )}
       </div>
